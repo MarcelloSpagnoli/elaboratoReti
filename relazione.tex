@@ -1,0 +1,191 @@
+\documentclass[a4paper,11pt]{article}
+
+% --- Encoding & lingua ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+
+% --- Font moderno con supporto completo ---
+\usepackage{lmodern}
+
+% --- Layout & stile ---
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+
+% --- Colori, link e codice ---
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=black}
+
+% --- Per codice sorgente ---
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible
+}
+
+% --- Tabelle ---
+\usepackage{array}
+\usepackage{booktabs}
+
+% --- Titolo ---
+\title{Relazione – Web Server in Python}
+\author{\textbf{Marcello Spagnoli}\\
+Matricola: 0001117244\\
+\texttt{marcello.spagnoli2@studio.unibo.it}}
+
+\begin{document}
+
+\maketitle
+
+\section*{1. Richieste della consegna}
+Progettare un semplice server HTTP in Python (usando \texttt{socket}) e servire un sito web statico con HTML/CSS.
+
+\section*{Requisiti minimi}
+\begin{itemize}
+  \item Il server deve rispondere su \texttt{localhost:8080}.
+  \item Deve servire almeno 3 pagine HTML statiche.
+  \item Gestione di richieste \texttt{GET} e risposta con codice 200.
+  \item Implementare risposta 404 per file inesistenti.
+\end{itemize}
+
+\section*{Estensioni opzionali}
+\begin{itemize}
+  \item Gestione dei MIME types (\texttt{.html}, \texttt{.css}, \texttt{.jpg}, ecc.).
+  \item Logging delle richieste.
+  \item Aggiunta di animazioni o layout responsive.
+\end{itemize}
+
+\section*{Output atteso}
+\begin{itemize}
+  \item Codice del server Python.
+  \item Cartella \texttt{www/} con i file HTML/CSS.
+  \item Relazione tecnica.
+\end{itemize}
+
+
+\section*{Funzionalità implementate}
+\begin{itemize}
+  \item Gestione delle richieste \texttt{GET} con risposta 200.
+  \item Gestione file non trovati con risposta 404.
+  \item Rifiuto dei metodi diversi da GET con errore 405.
+  \item Gestione di richieste malformate con errore 400.
+  \item Gestione eccezioni interne con errore 500.
+  \item Logging su terminale e su file con timestamp.
+  \item Riconoscimento automatico del MIME type.
+  \item Animazioni e layout responsive
+\end{itemize}
+
+\section*{Contenuti statici}
+Nel progetto sono presenti 3 pagine HTML accessibili:
+\begin{itemize}
+  \item \texttt{index.html}
+  \item \texttt{about.html}
+  \item \texttt{contact.html}
+\end{itemize}
+Tutti i file si trovano nella cartella \texttt{www/}. È presente anche il template \texttt{error.html}, utilizzato per mostrare i messaggi di errore personalizzati.
+\\È presenta una cartella css dove si trova un general.css che viene applicato a tutte le pagine + 3 file css specifici per ogni pagina
+
+\section*{Funzionamento}
+
+Il server HTTP è stato implementato in Python utilizzando il modulo \texttt{socket} per la comunicazione e \texttt{threading} per la gestione concorrente dei client. Di seguito si riassume il flusso di funzionamento:
+
+\begin{itemize}
+  \item All'avvio, il server effettua il \textbf{bind} sulla porta 8080 e resta in ascolto su \texttt{localhost}.
+  \item Ogni volta che un client si connette, viene avviato un nuovo thread che gestisce la connessione tramite la funzione \texttt{handle\_client}.
+  \item Il server legge la prima riga della richiesta HTTP e ne estrae metodo, path e protocollo.
+  \item Se la richiesta non è ben formata (ad esempio mancano elementi), il server restituisce un errore \textbf{400 Bad Request}.
+  \item Se il metodo non è \texttt{GET}, viene restituito un errore \textbf{405 Method Not Allowed}.
+  \item Se il file richiesto esiste all'interno della cartella \texttt{www}, viene restituito con codice \textbf{200 OK} e relativo MIME type.
+  \item Se il file non esiste, il server restituisce un errore \textbf{404 Not Found}, generando dinamicamente la pagina tramite un template HTML.
+  \item Se durante il processo si verifica un errore imprevisto, viene inviato un messaggio \textbf{500 Internal Server Error}.
+\end{itemize}
+
+Ogni richiesta viene loggata sia sul terminale che in un file \texttt{server.log}, indicando timestamp, tipo di richiesta e codice di risposta. Le pagine di errore vengono generate dinamicamente usando il file \texttt{error.html} come template, sostituendo il messaggio nella variabile \texttt{\{\{ message \}\}}.
+\\Tramite CSS sono state incluse animazioni e è stato implementato un layout responsive adatto al ridimensionamento
+
+
+\section*{Test effettuati}
+Ho effettutato un test scrivendo un file \texttt{test\_errori.py} che prova tutti i seguenti errori mandando richieste errate o non supportate per qualche motivo:\\\\
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Test} & \textbf{Metodo} & \textbf{Risultato Atteso} \\
+\midrule
+File esistente & GET \texttt{/index.html} & 200 OK con contenuto \\
+File inesistente & GET \texttt{/nofile.html} & 404 Not Found \\
+Metodo non supportato & POST \texttt{/index.html} & 405 Method Not Allowed \\
+Richiesta malformata & GET (e basta) & 400 Bad Request \\
+Errore interno & GET /test500.html (non ha permessi di lettura) & 500 Internal Server Error \\
+\bottomrule
+\end{tabular}
+
+\section*{Estensioni opzionali implementate}
+\begin{itemize}
+  \item Gestione dinamica del tipo MIME con il modulo \texttt{mimetypes}.
+  \item Logging dettagliato (IP client, metodo, percorso, stato).
+  \item Template per errori con messaggio dinamico (\texttt{\{\{ message \}\}}).
+  \item Utilizzo di \texttt{threading.Thread} per supportare più client contemporaneamente.
+\end{itemize}
+
+
+\section*{Avvio del Server e Requisiti}
+
+Per avviare il server, è necessario avere Python 3 installato.  
+Il server si avvia eseguendo il file \texttt{server.py} da terminale con il comando:
+
+\begin{verbatim}
+python3 server.py
+\end{verbatim}
+
+Il server ascolterà sulla porta 8080 e servirà i file contenuti nella cartella \texttt{www/}.
+
+\section*{Istruzioni per l'avvio e il test del server}
+\begin{enumerate}
+  \item Assicurarsi di avere installato Python 3.6 o versione superiore.
+  \item Posizionarsi nella cartella \texttt{elaboratoReti} dove si trova il file \texttt{server.py} e la cartella \texttt{www}.
+  \item Avviare il server eseguendo:
+  \begin{quote}
+    \texttt{python3 server.py}
+  \end{quote}
+
+  \item Una volta avviato, il server sarà in ascolto sulla porta 8080. Si può testare il funzionamento aprendo un browser e visitando:
+  \begin{quote}
+    \texttt{http://localhost:8080/index.html}
+  \end{quote}
+
+  \item Per provare i vari casi di errore, si possono usare strumenti come Thunder Client, provare a richiedere pagine che non esistono dal browser o provare il file \texttt{test\_errori.py}.
+  \item Tutte le richieste e gli errori verranno registrati nel file \texttt{server.log} nella stessa cartella di \texttt{server.py}.
+  \item Per fermare il server premere \texttt{Ctrl+C} nel terminale dove è in esecuzione.
+\end{enumerate}
+
+
+
+\subsection*{Struttura delle cartelle}
+
+\begin{verbatim}
+elaboratoReti/
+|-- server.py
+|-- server.log
+|-- www/
+    |-- index.html
+    |-- error.html
+    |-- contact.html
+    |-- test500.html (file vuoto solo per il test dell'errore 500, togliere i permessi)
+    |-- gear.html
+    |-- css/
+    |-- img/
+\end{verbatim}
+
+Dove:
+\begin{itemize}
+  \item \texttt{server.py} è il file principale che avvia il server
+  \item \texttt{server.log} contiene i log delle richieste e degli errori
+  \item \texttt{www/} contiene le pagine web statiche servite dal server
+\end{itemize}
+
+
+\end{document}

@@ -1,0 +1,33 @@
+/* Contatti */
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.contact-list li {
+  margin: 1rem 0;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: #fff;
+  padding: 0.9rem 1.2rem;
+  border-radius: 10px;
+  box-shadow: 0 3px 7px rgba(0,0,0,0.1);
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  justify-content: center;
+}
+
+.contact-item:hover {
+  background-color: #1abc9c;
+  color: white;
+}

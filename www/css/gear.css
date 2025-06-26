@@ -1,0 +1,44 @@
+
+
+/* Lista strumenti */
+ul.strumenti {
+  list-style: none;
+  padding: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+ul.strumenti li {
+  background: #eaf1f8;
+  margin: 0.8rem 0;
+  padding: 1rem;
+  border-left: 6px solid #3498db;
+  border-radius: 4px;
+  transition: transform 0.2s;
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+}
+
+ul.strumenti li:hover {
+  transform: translateX(5px);
+  background-color: #d6eaf8;
+}
+
+ul.strumenti li img {
+  width: 100px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+ul.strumenti li img.horizontal {
+  width: 180px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
